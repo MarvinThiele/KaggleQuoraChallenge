@@ -1,8 +1,7 @@
 import pandas as pd
 from tqdm import tqdm
 tqdm.pandas()
-from sklearn.model_selection import train_test_split, StratifiedKFold
-
+from sklearn.model_selection import train_test_split
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.layers import *
@@ -11,6 +10,7 @@ from keras.callbacks import *
 import gc
 import re
 import copy
+import operator
 
 from sklearn.metrics import f1_score
 
@@ -22,8 +22,6 @@ maxlen = 70  # max number of words in a question to use
 
 def clean_text(x):
     x = str(x).lower()
-    question = copy.deepcopy(x)
-    to_remove = ['the', 'what', 'to', 'a', 'in', 'is', 'of', 'i', 'how', 'and', 'the']
     mispell_dict = {'colour': 'color',
                     'centre': 'center',
                     'favourite': 'favorite',
@@ -114,7 +112,7 @@ def load_and_prec(preprocess=True):
 data_array = []
 embeddings = []
 
-#Com
+# Compare the length of the word indexes with and without preprocessing
 train_X, val_X, test_X, train_y, val_y, word_index = load_and_prec(preprocess=False)
 print(f"Native Word Index Count: {len(word_index)}")
 data_array.append(
@@ -122,7 +120,7 @@ data_array.append(
      copy.deepcopy(word_index)])
 
 train_X, val_X, test_X, train_y, val_y, word_index = load_and_prec(preprocess=True)
-print(f"Word Index: {len(word_index)}")
+print(f"Preprocessed Word Index Count: {len(word_index)}")
 data_array.append(
     [copy.deepcopy(train_X), copy.deepcopy(val_X), copy.deepcopy(test_X), copy.deepcopy(train_y), copy.deepcopy(val_y),
      copy.deepcopy(word_index)])
@@ -139,7 +137,14 @@ def load_glove(word_index):
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
 
-    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE) if o.split(" ")[0] in word_index)
+    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding="utf8") if o.split(" ")[0] in word_index)
+
+    to_del = []
+    for key in embeddings_index.keys():
+        if len(embeddings_index[key]) < 300:
+            to_del.append(key)
+    for key in to_del:
+        del embeddings_index[key]
 
     all_embs = np.stack(embeddings_index.values())
     emb_mean, emb_std = all_embs.mean(), all_embs.std()
@@ -157,26 +162,10 @@ embeddings.append(load_glove(data_array[0][5]))
 embeddings.append(load_glove(data_array[1][5]))
 print("Loaded Gloves")
 
-#TODO: See if you want to include:
-import operator
-
+# Rereading data-files for some analysis with embeddings
 train_df = pd.read_csv("input/train.csv")
 test_df = pd.read_csv("input/test.csv")
-print("Train shape : ", train_df.shape)
-print("Test shape : ", test_df.shape)
-
 train_df_list = train_df["question_text"].tolist()
-
-cust_word_index = {}
-for question in train_df_list:
-    for word in question.split(" "):
-        if word in cust_word_index.keys():
-            cust_word_index[word] = cust_word_index[word] + 1
-        else:
-            cust_word_index[word] = 1
-len(cust_word_index)
-
-sorted_word_index = sorted(cust_word_index.items(), key=operator.itemgetter(1), reverse=True)
 
 # Find and print coverage:
 for i in range(len(data_array)):
@@ -196,22 +185,6 @@ for i in range(len(data_array)):
 word_index_large = data_array[0][5]
 word_index_procc = data_array[1][5]
 
-not_covered = []
-not_covered_emb = []
-for word in word_index_large:
-    if word in word_index_procc:
-        continue
-    elif word in embeddings[0][1]:
-        not_covered.append(word)
-print(len(not_covered))
-
-for word in embeddings[1][1]:
-    if word in embeddings[0][1]:
-        continue
-    else:
-        not_covered_emb.append(word)
-print(len(not_covered_emb))
-
 not_emb_words = []
 for word in word_index_procc:
     if word in embeddings[1][1]:
@@ -219,14 +192,22 @@ for word in word_index_procc:
     else:
         not_emb_words.append(word)
 
+cust_word_index = {}
+for question in train_df_list:
+    for word in question.split(" "):
+        if word in cust_word_index.keys():
+            cust_word_index[word] = cust_word_index[word]+1
+        else:
+            cust_word_index[word] = 1
+
 not_emb_count_dict = {}
 for word in not_emb_words:
     if word in cust_word_index:
         not_emb_count_dict[word] = cust_word_index[word]
 
 sorted_emb_index = sorted(not_emb_count_dict.items(), key=operator.itemgetter(1), reverse=True)
-
-
+print("Top words which are not covered by the embedding but present in the data: ")
+print(sorted_emb_index[0:20])
 
 def model_cnn(embedding_matrix, word_index):
     max_features = len(word_index) + 1
@@ -267,17 +248,7 @@ def train_pred(model, data, epochs=2):
     pred_test_y = model.predict([test_X], batch_size=1024, verbose=0)
     return pred_val_y, pred_test_y
 
-
-def f1_smart(y_true, y_pred):
-    args = np.argsort(y_pred)
-    tp = y_true.sum()
-    fs = (tp - np.cumsum(y_true[args[:-1]])) / np.arange(y_true.shape[0] + tp - 1, tp, -1)
-    res_idx = np.argmax(fs)
-    return 2 * fs[res_idx], (y_pred[args[res_idx]] + y_pred[args[res_idx + 1]]) / 2
-
-
 outputs = []
-
 for i in range(len(embeddings)):
     pred_val_y, _ = train_pred(model_cnn(embeddings[i][0], data_array[i][5]), data_array[i], epochs=2)
     thresh = 0.05
@@ -288,5 +259,8 @@ for i in range(len(embeddings)):
         f1_scores.append(f1_score(data_array[i][4], pred_val_y_decided))
     outputs.append(max(f1_scores))
 
-for max_score in outputs:
-    print(f"Max F1 Score is: {max_score}")
+for i, max_score in enumerate(outputs):
+    if i == 0:
+        print(f"Native Max F1 Score is: {max_score}")
+    else:
+        print(f"Preprocessed Max F1 Score is: {max_score}")

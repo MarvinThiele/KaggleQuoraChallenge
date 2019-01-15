@@ -1,22 +1,14 @@
 import pandas as pd
 from tqdm import tqdm
-
 tqdm.pandas()
 from sklearn.model_selection import train_test_split
-from sklearn import metrics
-
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.layers import *
 from keras.models import *
-from keras import initializers, regularizers, constraints, optimizers, layers
-from keras.initializers import *
-from keras.optimizers import *
-import keras.backend as K
 from keras.callbacks import *
 import re
 import copy
-
 from sklearn.metrics import f1_score
 
 ## some config values
@@ -126,7 +118,14 @@ def load_glove(word_index):
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
 
-    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE) if o.split(" ")[0] in word_index)
+    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding='uft-8') if o.split(" ")[0] in word_index)
+
+    to_del = []
+    for key in embeddings_index.keys():
+        if len(embeddings_index[key]) < 300:
+            to_del.append(key)
+    for key in to_del:
+        del embeddings_index[key]
 
     all_embs = np.stack(embeddings_index.values())
     emb_mean, emb_std = all_embs.mean(), all_embs.std()

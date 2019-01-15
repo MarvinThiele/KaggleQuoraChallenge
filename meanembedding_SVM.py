@@ -1,9 +1,7 @@
 import pandas as pd
 import re
-import copy
-import sklearn.metrics
-
 from sklearn.model_selection import train_test_split
+from sklearn import linear_model
 from sklearn import metrics
 from keras.preprocessing.text import Tokenizer
 from keras.callbacks import *
@@ -11,15 +9,12 @@ from tqdm import tqdm
 tqdm.pandas()
 
 ## some config values
-embed_size = 300  # how big is each word vector
 max_features = 95000  # how many unique words to use (i.e num rows in embedding vector)
 maxlen = 70  # max number of words in a question to use
 
 
 def clean_text(x):
     x = str(x).lower()
-    question = copy.deepcopy(x)
-    to_remove = ['the', 'what', 'to', 'a', 'in', 'is', 'of', 'i', 'how', 'and', 'the']
     mispell_dict = {'colour': 'color',
                     'centre': 'center',
                     'favourite': 'favorite',
@@ -60,12 +55,15 @@ def clean_text(x):
 
 
 def load_glove_index(word_index):
-    max_features = len(word_index) + 1
     EMBEDDING_FILE = 'input/embeddings/glove.840B.300d/glove.840B.300d.txt'
-
     def get_coefs(word, *arr): return word, np.asarray(arr, dtype='float32')
-
-    embedding_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE) if o.split(" ")[0] in word_index)
+    embedding_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding="utf8") if o.split(" ")[0] in word_index)
+    to_del = []
+    for key in embedding_index.keys():
+        if len(embedding_index[key]) < 300:
+            to_del.append(key)
+    for key in to_del:
+        del embedding_index[key]
     return embedding_index
 
 
@@ -106,7 +104,6 @@ print("Test shape : ", test_df.shape)
 train_df["question_text"] = train_df["question_text"].apply(lambda x: clean_text(x))
 test_df["question_text"] = test_df["question_text"].apply(lambda x: clean_text(x))
 
-## split to train and val
 train_df, val_df = train_test_split(train_df, test_size=0.05, random_state=1341)
 
 train_X = train_df["question_text"].values
@@ -133,7 +130,6 @@ val_y = val_df['target'].values
 print("Done!")
 
 # SVM
-from sklearn import linear_model
 clf = linear_model.SGDClassifier(max_iter=1000, tol=1e-3, class_weight={1: 20})
 clf.fit(train_X, train_y)
 

@@ -2,7 +2,7 @@
 
 ## How to run this repo
 1. Install the required packages listed in the dependencies by using "pip install [name]"
-2. Execute the data_download.py file
+2. Execute the `data_download.py` file
     - Make sure you see the success message at the end
     - Should the file download fail, follow the instruction at the top of the file
 3. Execute any file you want!

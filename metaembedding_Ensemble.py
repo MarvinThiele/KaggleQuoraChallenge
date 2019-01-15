@@ -139,7 +139,14 @@ def load_glove(word_index):
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
 
-    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE))
+    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding='utf-8'))
+
+    to_del = []
+    for key in embeddings_index.keys():
+        if len(embeddings_index[key]) < 300:
+            to_del.append(key)
+    for key in to_del:
+        del embeddings_index[key]
 
     all_embs = np.stack(embeddings_index.values())
     emb_mean, emb_std = -0.005838499, 0.48782197
@@ -162,7 +169,7 @@ def load_fasttext(word_index):
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
 
-    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE) if len(o) > 100)
+    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding='utf-8') if len(o) > 100)
 
     all_embs = np.stack(embeddings_index.values())
     emb_mean, emb_std = all_embs.mean(), all_embs.std()
@@ -375,7 +382,6 @@ for w, k in word_index.items():
     if k >= max_features:
         break
 embedding_matrix_1 = load_glove(word_index)
-# embedding_matrix_2 = load_fasttext(word_index)
 embedding_matrix_3 = load_para(word_index)
 
 embedding_matrix = np.mean([embedding_matrix_1, embedding_matrix_3], axis = 0)

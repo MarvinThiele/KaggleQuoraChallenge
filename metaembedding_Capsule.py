@@ -132,7 +132,14 @@ def load_glove(word_index):
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
 
-    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE) if o.split(" ")[0] in word_index)
+    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding='utf-8') if o.split(" ")[0] in word_index)
+
+    to_del = []
+    for key in embeddings_index.keys():
+        if len(embeddings_index[key]) < 300:
+            to_del.append(key)
+    for key in to_del:
+        del embeddings_index[key]
 
     all_embs = np.stack(embeddings_index.values())
     emb_mean, emb_std = all_embs.mean(), all_embs.std()
@@ -154,7 +161,7 @@ def load_fasttext(word_index):
         return word, np.asarray(arr, dtype='float32')
 
     embeddings_index = dict(
-        get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE) if len(o) > 100 and o.split(" ")[0] in word_index)
+        get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding='utf-8') if len(o) > 100 and o.split(" ")[0] in word_index)
 
     all_embs = np.stack(embeddings_index.values())
     emb_mean, emb_std = all_embs.mean(), all_embs.std()
@@ -319,5 +326,3 @@ for i, (train_index, valid_index) in enumerate(kfold.split(X, Y)):
 
 y_test = y_test.reshape((-1, 1))
 pred_test_y = (y_test>np.mean(bestscore)).astype(int)
-sub['prediction'] = pred_test_y
-sub.to_csv("submission.csv", index=False)

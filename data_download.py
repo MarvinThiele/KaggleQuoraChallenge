@@ -2,11 +2,14 @@
 # You need to have about 21 GB of free space to make this work
 # The embedding zip is hosted on Google Drive by me, since it's not possible to download it directly from Keggle easily
 
-# Should the automatic download of the embeddings fail, please download the file from of of these sources:
-# https://drive.google.com/open?id=1qV7MpMWHToQXqtQVxv3Ev6UAjJEM39f2
-# https://www.kaggle.com/c/quora-insincere-questions-classification/download/embeddings.zip
+# Should the automatic download of the data files fail, please download the files from of of these sources:
+# https://www.kaggle.com/c/quora-insincere-questions-classification/download/test.csv
+# https://www.kaggle.com/c/quora-insincere-questions-classification/download/train.csv
+# In that case please place the files in the "input" folder and re-execute this script
 #
-# In that case please place the file in the "input" folder and reexecute this script for unzipping the file
+# Should the automatic download of the embeddings fail, please download the file from of of these sources:
+# https://www.kaggle.com/c/quora-insincere-questions-classification/download/embeddings.zip
+# In that case please place the file in the "input" folder and re-execute this script
 
 import zipfile
 import requests
@@ -49,6 +52,18 @@ def missing_embeddings():
     if not os.path.isfile('input/embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec'):
         return True
     return False
+
+if not os.path.isfile('input/train.csv.zip'):
+    print("Downloading Training File")
+    file_id = '12FX9Y7V_PssRO24myXVmn89uGwZ1zEsq'
+    destination = 'input/train.csv.zip'
+    download_file_from_google_drive(file_id, destination)
+
+if not os.path.isfile('input/test.csv.zip'):
+    print("Downloading Test File")
+    file_id = '1_xCv-rYfXHYe1ZGjYfU2-C50ySwXCu78'
+    destination = 'input/test.csv.zip'
+    download_file_from_google_drive(file_id, destination)
 
 if not os.path.isfile('input/test.csv'):
     print("Unzipping Test File")

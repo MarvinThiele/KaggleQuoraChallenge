@@ -1,70 +1,16 @@
 import pandas as pd
 from tqdm import tqdm
 tqdm.pandas()
-
 import re
-import copy
 import operator
 from textblob import TextBlob
 from timeit import default_timer as timer
-
-def clean_text(x):
-    x = str(x).lower()
-    question = copy.deepcopy(x)
-    to_remove = ['the', 'what', 'to', 'a', 'in', 'is', 'of', 'i', 'how', 'and', 'the']
-    mispell_dict = {'colour': 'color',
-                    'centre': 'center',
-                    'favourite': 'favorite',
-                    'travelling': 'traveling',
-                    'counselling': 'counseling',
-                    'theatre': 'theater',
-                    'cancelled': 'canceled',
-                    'labour': 'labor',
-                    'organisation': 'organization',
-                    'wwii': 'world war 2',
-                    'citicise': 'criticize',
-                    'cryptocurrencies': 'crypto currencies',
-                    'ethereum': 'crypto currency',
-                    'coinbase': 'crypto market',
-                    'altcoins': 'crypto currency',
-                    'litecoin': 'crypto currency',
-                    'altcoin': 'alt coin'}
-
-    #
-    # Clean punctuations
-    for punct in "/-":
-        x = x.replace(punct, ' ')
-    for punct in '&':
-        x = x.replace(punct, f' {punct} ')
-    for punct in '?!.,"#$%()*+-/:;<=>@[\\]^_`{|}~' + '“”':
-        x = x.replace(punct, '')
-    for punct in '’\'`´•~£·_©^®<→°€™›♥←×§″′█½à…“★”–●â►−¢²¬░¶↑±¿▾═¦║―¥▓—‹─▒：¼⊕▼▪†■▀¨▄♫☆é¯♦¤▲è¸¾Ã⋅∞∙）↓、│（»，♪╩╚³・╦╣╔╗▬❤ïØ¹≤‡√₹':
-        x = x.replace(punct, '')
-
-    for word in to_remove:
-        split = x.split(" ")
-        if word in split:
-            x = re.sub(" " + word + " ", ' ', x)
-            x = re.sub(word + "$", ' ', x)
-            x = re.sub("^" + word, ' ', x)
-
-    for word in mispell_dict.keys():
-        split = x.split(" ")
-        if word in split:
-            x = re.sub(" " + word + " ", " " + mispell_dict[word] + " ", x)
-            x = re.sub(word + "$", " " + mispell_dict[word] + " ", x)
-            x = re.sub("^" + word, " " + mispell_dict[word] + " ", x)
-
-    return x
 
 train_df = pd.read_csv("input/train.csv")
 test_df = pd.read_csv("input/test.csv")
 print("Train shape : ",train_df.shape)
 print("Test shape : ",test_df.shape)
 train_df_reduced = train_df.loc[0:10]
-
-train_df["question_text"] = train_df["question_text"].apply(lambda x: clean_text(x))
-test_df["question_text"] = test_df["question_text"].apply(lambda x: clean_text(x))
 
 train_df_list = train_df["question_text"].str.lower().tolist()
 
@@ -96,15 +42,15 @@ print(f"The median sentence length is: {median}")
 
 # Misspelling correction
 start = timer()
-train_df_reduced["question_text"] = train_df_reduced['question_text'].apply(lambda x: str(TextBlob(x).correct()))
+train_df_reduced["question_text_corrected"] = train_df_reduced['question_text'].apply(lambda x: str(TextBlob(x).correct()))
 end = timer()
-print(end - start)
+print(f"Sample Misspelling Correction took {end - start} seconds")
 
 # Sentiment analysis
 start = timer()
 train_df_reduced['sentiment'] = train_df_reduced['question_text'].apply(lambda x: TextBlob(x).sentiment[0] )
 end = timer()
-print(end - start)
+print(f"Sample Sentiment Analysis took {end - start} seconds")
 
-print(train_df_reduced)
-
+with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+    print(train_df_reduced)
