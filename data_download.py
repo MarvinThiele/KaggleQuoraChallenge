@@ -39,6 +39,17 @@ def save_response_content(response, destination):
             if chunk: # filter out keep-alive new chunks
                 f.write(chunk)
 
+def missing_embeddings():
+    if not os.path.isfile('input/embeddings/glove.840B.300d/glove.840B.300d.txt'):
+        return True
+    if not os.path.isfile('input/embeddings/GoogleNews-vectors-negative300/GoogleNews-vectors-negative300.bin'):
+        return True
+    if not os.path.isfile('input/embeddings/paragram_300_sl999/paragram_300_sl999.txt'):
+        return True
+    if not os.path.isfile('input/embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec'):
+        return True
+    return False
+
 if not os.path.isfile('input/test.csv'):
     print("Unzipping Test File")
     with zipfile.ZipFile('input/test.csv.zip', 'r') as zip_ref:
@@ -55,8 +66,9 @@ if not os.path.isfile('input/embeddings.zip'):
     destination = 'input/embeddings.zip'
     download_file_from_google_drive(file_id, destination)
 
-print("Unzipping Embeddings")
-with zipfile.ZipFile('input/embeddings.zip', 'r') as zip_ref:
-    zip_ref.extractall("input/embeddings")
+if missing_embeddings():
+    print("Unzipping Embeddings")
+    with zipfile.ZipFile('input/embeddings.zip', 'r') as zip_ref:
+        zip_ref.extractall("input/embeddings")
 
-print("All data is present and working. Good Job!")
+print("All necessary data is present. Good Job!")

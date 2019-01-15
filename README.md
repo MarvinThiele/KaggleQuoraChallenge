@@ -8,6 +8,7 @@
 3. Execute any file you want!
     - Each file is completely self contained, since these files used to be notebooks on kaggle.com
     - You can find a description below
+
 ## Available Approaches & Descriptions
 - `data_analysis.py`   Gives an overview over the data
 - `embedding_CNN_LSTM.py` Contains a CNN and a LSTM classifier
@@ -16,6 +17,13 @@
 - `metaembedding_Ensemble` Contains a Ensemble classifier with a meta embedding (External)
 - `preprocessing_comparison` Contains a comparison between using and not using preprocessing before the embedding
 - `tfidf_SVM` Contains a SVM classifier with TF-IDF vectorization
+
+## Requirements
+- Have around 22 GB of free disk space
+- Have 16GB+ of RAM for loading the embeddings
+- Have all specified packages & data files
+- Recommended: Have a GPU
+- Recommended: Have tensorflow-gpu installed
 
 ## Dependencies
 Please make sure to have these python packages installed before runnging the code
@@ -30,11 +38,15 @@ tensorflow
 numpy
 ```
 
-## Requirements
-- Have around 22 GB of free disk space
-- Have 16GB+ of RAM for loading the embeddings
-- Optional: Have tensorflow-gpu installed
-
 ## Rights
 - All right reserved
 - Certain code snippets are taken from different owners. I tried to include all sources.
+
+## Code from other authors
+- I have taken code snippets & inspiration from other public kaggle notebooks
+- Special Thanks to:
+    - https://www.kaggle.com/christofhenkel/how-to-preprocessing-when-using-embeddings
+    - https://www.kaggle.com/shujian/different-embeddings-with-attention-fork-fork
+    - https://www.kaggle.com/sudalairajkumar/a-look-at-different-embeddings
+    - https://www.kaggle.com/gmhost/gru-capsule
+    - https://www.kaggle.com/vanshjatana/magic-numbers-is-all-you-need-0-692-lb-986394

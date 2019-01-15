@@ -1,3 +1,5 @@
+# Source: https://www.kaggle.com/gmhost/gru-capsule
+
 import pandas as pd
 import numpy as np
 from tqdm import tqdm

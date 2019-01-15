@@ -1,3 +1,5 @@
+# Source: https://www.kaggle.com/vanshjatana/magic-numbers-is-all-you-need-0-692-lb-986394
+
 ## some config values
 embed_size = 300 # how big is each word vector
 max_features = 95000 # how many unique words to use (i.e num rows in embedding vector)

@@ -3,22 +3,11 @@ import copy
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
-from sklearn.model_selection import train_test_split, StratifiedKFold
+from sklearn.model_selection import train_test_split
 from sklearn import metrics
-
-
-def balancedTrainingSet(dataframe):
-    positiveExamples = dataframe.loc[dataframe['target'] == 1]
-    negativeExamples = dataframe.loc[dataframe['target'] == 0]
-    balancedSet = pd.concat([positiveExamples, negativeExamples[0:len(positiveExamples)]])
-    balancedSet = balancedSet.sample(frac=1)
-    return balancedSet
-
 
 def clean_text(x):
     x = str(x).lower()
-    question = copy.deepcopy(x)
-    to_remove = ['the', 'what', 'to', 'a', 'in', 'is', 'of', 'i', 'how', 'and', 'the']
     mispell_dict = {'colour': 'color',
                     'centre': 'center',
                     'favourite': 'favorite',
@@ -37,7 +26,6 @@ def clean_text(x):
                     'litecoin': 'crypto currency',
                     'altcoin': 'alt coin'}
 
-    #
     # Clean punctuations
     for punct in "/-":
         x = x.replace(punct, ' ')
@@ -89,7 +77,3 @@ output = clf.predict(transformedTestQuestions)
 
 print(metrics.classification_report(val_Y, clf.predict(transformedValQuestions), target_names=["Non-Toxic", "Toxic"]))
 print(f"Combiend F1-Score: {metrics.f1_score(val_Y, clf.predict(transformedValQuestions))}")
-
-print("Creating Submission")
-submission = test_df[['qid']].assign(prediction=pd.Series(output).values)
-submission.to_csv('submission.csv', index=False)
