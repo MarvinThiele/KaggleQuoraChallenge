@@ -53,6 +53,9 @@ def missing_embeddings():
         return True
     return False
 
+if not os.path.exists('input'):
+    os.makedirs('input')
+
 if not os.path.isfile('input/train.csv.zip'):
     print("Downloading Training File")
     file_id = '12FX9Y7V_PssRO24myXVmn89uGwZ1zEsq'
