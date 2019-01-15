@@ -24,8 +24,8 @@ from unidecode import unidecode
 import platform
 print(platform.python_version())
 
-train = pd.read_csv("../input/train.csv")
-test = pd.read_csv("../input/test.csv")
+train = pd.read_csv("input/train.csv")
+test = pd.read_csv("input/test.csv")
 print("Train shape : ", train.shape)
 print("Test shape : ", test.shape)
 
@@ -125,7 +125,7 @@ max_features = len(word_index) + 1
 
 
 def load_glove(word_index):
-    EMBEDDING_FILE = '../input/embeddings/glove.840B.300d/glove.840B.300d.txt'
+    EMBEDDING_FILE = 'input/embeddings/glove.840B.300d/glove.840B.300d.txt'
 
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
@@ -146,7 +146,7 @@ def load_glove(word_index):
 
 
 def load_fasttext(word_index):
-    EMBEDDING_FILE = '../input/embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec'
+    EMBEDDING_FILE = 'input/embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec'
 
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
@@ -168,7 +168,7 @@ def load_fasttext(word_index):
 
 
 def load_para(word_index):
-    EMBEDDING_FILE = '../input/embeddings/paragram_300_sl999/paragram_300_sl999.txt'
+    EMBEDDING_FILE = 'input/embeddings/paragram_300_sl999/paragram_300_sl999.txt'
 
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')

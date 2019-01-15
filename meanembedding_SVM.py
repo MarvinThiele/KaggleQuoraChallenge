@@ -61,7 +61,7 @@ def clean_text(x):
 
 def load_glove_index(word_index):
     max_features = len(word_index) + 1
-    EMBEDDING_FILE = '../input/embeddings/glove.840B.300d/glove.840B.300d.txt'
+    EMBEDDING_FILE = 'input/embeddings/glove.840B.300d/glove.840B.300d.txt'
 
     def get_coefs(word, *arr): return word, np.asarray(arr, dtype='float32')
 
@@ -98,8 +98,8 @@ def mean_vectorize(data, embedding_index):
     return vec_data
 
 
-train_df = pd.read_csv("../input/train.csv")
-test_df = pd.read_csv("../input/test.csv")
+train_df = pd.read_csv("input/train.csv")
+test_df = pd.read_csv("input/test.csv")
 print("Train shape : ", train_df.shape)
 print("Test shape : ", test_df.shape)
 

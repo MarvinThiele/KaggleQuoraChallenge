@@ -57,8 +57,8 @@ def clean_text(x):
 
     return x
 
-train_df = pd.read_csv("../input/train.csv")
-test_df = pd.read_csv("../input/test.csv")
+train_df = pd.read_csv("input/train.csv")
+test_df = pd.read_csv("input/test.csv")
 print("Train shape : ",train_df.shape)
 print("Test shape : ",test_df.shape)
 train_df_reduced = train_df.loc[0:100000]
@@ -112,3 +112,4 @@ end = timer()
 print(end - start)
 
 train_df_reduced[:15]
+

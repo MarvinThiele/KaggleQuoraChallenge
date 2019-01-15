@@ -87,8 +87,8 @@ def clean_text(x):
 
 
 def load_and_prec():
-    train_df = pd.read_csv("../input/train.csv")
-    test_df = pd.read_csv("../input/test.csv")
+    train_df = pd.read_csv("input/train.csv")
+    test_df = pd.read_csv("input/test.csv")
     print("Train shape : ", train_df.shape)
     print("Test shape : ", test_df.shape)
 
@@ -132,7 +132,7 @@ def load_and_prec():
     return train_X, val_X, test_X, train_y, val_y, tokenizer.word_index
 
 def load_glove(word_index):
-    EMBEDDING_FILE = '../input/embeddings/glove.840B.300d/glove.840B.300d.txt'
+    EMBEDDING_FILE = 'input/embeddings/glove.840B.300d/glove.840B.300d.txt'
 
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
@@ -155,7 +155,7 @@ def load_glove(word_index):
 
 
 def load_fasttext(word_index):
-    EMBEDDING_FILE = '../input/embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec'
+    EMBEDDING_FILE = 'input/embeddings/wiki-news-300d-1M/wiki-news-300d-1M.vec'
 
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
@@ -178,7 +178,7 @@ def load_fasttext(word_index):
 
 
 def load_para(word_index):
-    EMBEDDING_FILE = '../input/embeddings/paragram_300_sl999/paragram_300_sl999.txt'
+    EMBEDDING_FILE = 'input/embeddings/paragram_300_sl999/paragram_300_sl999.txt'
 
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
@@ -408,7 +408,7 @@ pred_val_y = np.sum([outputs[i][0]*coefs[i] for i in range(len(coefs))], axis = 
 pred_test_y = (pred_test_y > 0.34).astype(int)
 pred_val_y = (pred_val_y > 0.34).astype(int)
 
-test_df = pd.read_csv("../input/test.csv", usecols=["qid"])
+test_df = pd.read_csv("input/test.csv", usecols=["qid"])
 out_df = pd.DataFrame({"qid":test_df["qid"].values})
 out_df['prediction'] = pred_test_y
 out_df.to_csv("submission.csv", index=False)

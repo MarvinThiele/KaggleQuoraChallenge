@@ -58,8 +58,8 @@ def clean_text(x):
     return x
 
 
-train_df = pd.read_csv("../input/train.csv")
-test_df = pd.read_csv("../input/test.csv")
+train_df = pd.read_csv("input/train.csv")
+test_df = pd.read_csv("input/test.csv")
 
 train_df["question_text"] = train_df["question_text"].apply(lambda x: clean_text(x))
 test_df["question_text"] = test_df["question_text"].apply(lambda x: clean_text(x))
