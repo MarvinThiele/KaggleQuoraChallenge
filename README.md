@@ -41,6 +41,18 @@ numpy
 ## Rights
 - All right reserved
 - Certain code snippets are taken from different owners. I tried to include all sources.
+- This GitHub Repo https://github.com/MarvinThiele/KaggleQuoraChallenge
+
+## Troubleshooting
+1. I receive GPU OOM errors when trying to execute the code
+    - To fix this issue you can reduce the batch size in the code (at `train_pred()`)
+    - If this doesnt fix the issue, it's most likely the embedding layer, which can not be reduced in size
+    - Use a server with more VRAM in this case
+2. My computer freezes and doesn't work anymore
+    - This can happen if you are running less than 16GB of RAM
+    - This is caused by loading the word embeddings into the memory
+3. I have problems not listed here
+    - Contact me at marvin.thiele@student.hpi.uni-potsdam.de
 
 ## Code from other authors
 - I have taken code snippets & inspiration from other public kaggle notebooks
@@ -50,3 +62,4 @@ numpy
     - https://www.kaggle.com/sudalairajkumar/a-look-at-different-embeddings
     - https://www.kaggle.com/gmhost/gru-capsule
     - https://www.kaggle.com/vanshjatana/magic-numbers-is-all-you-need-0-692-lb-986394
+   

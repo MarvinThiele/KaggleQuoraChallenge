@@ -118,7 +118,7 @@ def load_glove(word_index):
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
 
-    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding='uft-8') if o.split(" ")[0] in word_index)
+    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding='utf8') if o.split(" ")[0] in word_index)
 
     to_del = []
     for key in embeddings_index.keys():

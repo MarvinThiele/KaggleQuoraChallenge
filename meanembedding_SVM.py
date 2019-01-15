@@ -88,7 +88,6 @@ def mean_vectorize(data, embedding_index):
             else:
                 continue
         if len(word_vecs) == 0:
-            print("Making the sentence all zeros")
             vec_data.append(np.zeros(300))
         else:
             # Average them

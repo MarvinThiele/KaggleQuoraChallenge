@@ -132,7 +132,7 @@ def load_glove(word_index):
     def get_coefs(word, *arr):
         return word, np.asarray(arr, dtype='float32')
 
-    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding='utf-8') if o.split(" ")[0] in word_index)
+    embeddings_index = dict(get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding='utf8') if o.split(" ")[0] in word_index)
 
     to_del = []
     for key in embeddings_index.keys():
@@ -161,7 +161,7 @@ def load_fasttext(word_index):
         return word, np.asarray(arr, dtype='float32')
 
     embeddings_index = dict(
-        get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding='utf-8') if len(o) > 100 and o.split(" ")[0] in word_index)
+        get_coefs(*o.split(" ")) for o in open(EMBEDDING_FILE, encoding='utf8') if len(o) > 100 and o.split(" ")[0] in word_index)
 
     all_embs = np.stack(embeddings_index.values())
     emb_mean, emb_std = all_embs.mean(), all_embs.std()
