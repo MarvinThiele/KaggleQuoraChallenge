@@ -33,7 +33,6 @@ def clean_text(x):
                     'litecoin': 'crypto currency',
                     'altcoin': 'alt coin'}
 
-    #
     # Clean punctuations
     for punct in "/-":
         x = x.replace(punct, ' ')
@@ -52,7 +51,6 @@ def clean_text(x):
             x = re.sub("^" + word, " " + mispell_dict[word] + " ", x)
 
     return x
-
 
 def load_glove_index(word_index):
     EMBEDDING_FILE = 'input/embeddings/glove.840B.300d/glove.840B.300d.txt'

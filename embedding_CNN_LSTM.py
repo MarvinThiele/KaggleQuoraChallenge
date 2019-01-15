@@ -8,7 +8,6 @@ from keras.layers import *
 from keras.models import *
 from keras.callbacks import *
 import re
-import copy
 from sklearn.metrics import f1_score
 
 ## some config values
@@ -18,8 +17,6 @@ maxlen = 70  # max number of words in a question to use
 
 def clean_text(x):
     x = str(x).lower()
-    question = copy.deepcopy(x)
-    to_remove = ['the', 'what', 'to', 'a', 'in', 'is', 'of', 'i', 'how', 'and', 'the']
     mispell_dict = {'colour': 'color',
                     'centre': 'center',
                     'favourite': 'favorite',
