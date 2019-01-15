@@ -61,7 +61,7 @@ train_df = pd.read_csv("input/train.csv")
 test_df = pd.read_csv("input/test.csv")
 print("Train shape : ",train_df.shape)
 print("Test shape : ",test_df.shape)
-train_df_reduced = train_df.loc[0:100000]
+train_df_reduced = train_df.loc[0:10]
 
 train_df["question_text"] = train_df["question_text"].apply(lambda x: clean_text(x))
 test_df["question_text"] = test_df["question_text"].apply(lambda x: clean_text(x))
@@ -76,10 +76,11 @@ for question in train_df_list:
             cust_word_index[word] = cust_word_index[word]+1
         else:
             cust_word_index[word] = 1
-len(cust_word_index)
+print(f"Number of unique words in training set: {len(cust_word_index)}")
 
 sorted_word_index = sorted(cust_word_index.items(), key=operator.itemgetter(1), reverse=True)
-print("Finished")
+print("Most common words:")
+print(sorted_word_index[0:10])
 
 # Calculate the average length of the sentences
 sentence_sum = 0
@@ -95,13 +96,7 @@ print(f"The median sentence length is: {median}")
 
 # Misspelling correction
 start = timer()
-train_df["question_text"] = train_df['question_text'].apply(lambda x: str(TextBlob(x).correct()))
-end = timer()
-print(end - start)
-
-# Misspelling correction
-start = timer()
-train_df_reduced['corr_question_text'] = train_df_reduced['question_text'].apply(lambda x: str(TextBlob(x).correct()))
+train_df_reduced["question_text"] = train_df_reduced['question_text'].apply(lambda x: str(TextBlob(x).correct()))
 end = timer()
 print(end - start)
 
@@ -111,5 +106,5 @@ train_df_reduced['sentiment'] = train_df_reduced['question_text'].apply(lambda x
 end = timer()
 print(end - start)
 
-train_df_reduced[:15]
+print(train_df_reduced)
 

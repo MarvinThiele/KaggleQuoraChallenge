@@ -1,28 +1,16 @@
 import pandas as pd
-import numpy as np
 from tqdm import tqdm
-
 tqdm.pandas()
 from sklearn.model_selection import train_test_split, StratifiedKFold
-from sklearn import metrics
-from gensim.models import KeyedVectors
 
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.layers import *
 from keras.models import *
-from keras import initializers, regularizers, constraints, optimizers, layers
-from keras.initializers import *
-from keras.optimizers import *
-import keras.backend as K
 from keras.callbacks import *
-import tensorflow as tf
-import os
-import time
 import gc
 import re
 import copy
-from unidecode import unidecode
 
 from sklearn.metrics import f1_score
 
@@ -126,8 +114,9 @@ def load_and_prec(preprocess=True):
 data_array = []
 embeddings = []
 
+#Com
 train_X, val_X, test_X, train_y, val_y, word_index = load_and_prec(preprocess=False)
-print(f"Word Index: {len(word_index)}")
+print(f"Native Word Index Count: {len(word_index)}")
 data_array.append(
     [copy.deepcopy(train_X), copy.deepcopy(val_X), copy.deepcopy(test_X), copy.deepcopy(train_y), copy.deepcopy(val_y),
      copy.deepcopy(word_index)])
